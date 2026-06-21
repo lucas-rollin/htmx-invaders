@@ -64,14 +64,49 @@ FRAMEWORKS = [
     {"name": "Babel",   "color": (245, 207, 90),    "file": "babel.png"},
 ]
 
-POWERUP_DROP_CHANCE = 0.10 
+POWERUP_DROP_CHANCE = 0.05
 
 POWERUPS = [
-    {"name": "+1 life",    "color": HTMX_COLOR,      "symbol": "</>",  "effect": "extra_life",  "timer": 0},
-    {"name": "hx-boost",   "color": HTMX_COLOR,      "symbol": "<b>",  "effect": "rapid_fire",  "timer": 8},
-    {"name": "hx-trigger", "color": HTMX_COLOR,      "symbol": "<t>",  "effect": "triple_shot", "timer": 8},
-    {"name": "vanilla.js", "color": (239, 216, 29),  "symbol": "JS",   "effect": "pierce_shot", "timer": 8}, 
-    {"name": "alpine.js",  "color": (145, 190, 198), "symbol": "v",    "effect": "shield",      "timer": 10},
+    {
+        "name": "+1 life", 
+        "color": HTMX_COLOR,
+        "symbol": "</>",
+        "effect": "extra_life", 
+        "timer": 0,
+        "spawn_rate_weight": 1
+    },
+    {
+        "name": "hx-boost", 
+        "color": HTMX_COLOR, 
+        "symbol": "<b>", 
+        "effect": "rapid_fire", 
+        "timer": 8,
+        "spawn_rate_weight": 3
+    },
+    {
+        "name": "hx-trigger", 
+        "color": HTMX_COLOR, 
+        "symbol": "<t>", 
+        "effect": "triple_shot", 
+        "timer": 8,
+        "spawn_rate_weight": 2
+    },
+    {
+        "name": "vanilla.js", 
+        "color": (239, 216, 29),  
+        "symbol": "JS",   
+        "effect": "pierce_shot", 
+        "timer": 8,
+        "spawn_rate_weight": 3
+    }, 
+    {
+        "name": "alpine.js", 
+        "color": (145, 190, 198), 
+        "symbol": "v", 
+        "effect": "shield", 
+        "timer": 6,
+        "spawn_rate_weight": 2
+    },        
 ]
 
 IMG_DIR = resource_path(os.path.join("assets", "img"))
@@ -268,11 +303,17 @@ class Player:
         r = self.rect
         color = DANGER_COLOR if self.hit_flash > 0 else HTMX_COLOR
 
-        shield = any(p.effect == "shield" for p in powerup_effects)
+        # Draw shield powerup
+        shield = next((p for p in powerup_effects if p.effect == "shield"), None)
         if shield:
+            if shield.timer < 2:
+                pulse = (math.sin(pygame.time.get_ticks() / 50) + 1) / 2
+                alpha = int(70 * pulse)
+            else:
+                alpha = 40
             glow = pygame.Surface((r.width + 24, r.height + 24), pygame.SRCALPHA)
             pygame.draw.rect(
-                glow, (*HTMX_GLOW, 40), glow.get_rect(), border_radius=14
+                glow, (*HTMX_GLOW, alpha), glow.get_rect(), border_radius=14
             )
             surf.blit(glow, (r.x - 12, r.y - 12))
 
@@ -332,10 +373,13 @@ class PowerUpDrop:
     def __init__(self, x, y):
         self.base_x = x
         self.y = y
-        self.power = random.choice(POWERUPS)
         self.vy = random.uniform(120, 200)
         self.bob_phase = random.uniform(0, math.tau)
         self.alive = True
+
+        weights = [p["spawn_rate_weight"] for p in POWERUPS]
+        chosen_power = random.choices(POWERUPS, weights=weights)
+        self.power = chosen_power[0]
 
     @property
     def x(self):
@@ -344,7 +388,6 @@ class PowerUpDrop:
     @property
     def rect(self):
         return pygame.Rect(int(self.x), int(self.y), self.WIDTH, self.HEIGHT)
-
 
     def update(self, dt):
         self.bob_phase += dt * 2
