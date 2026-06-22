@@ -223,13 +223,13 @@ SOUNTRACK_PATHS = [
 
 MENU_SOUNDTRACK = "menu.ogg"
 
-shoot_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "shoot.wav")))
+shoot_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "shoot.ogg")))
 shoot_sound.set_volume(0.15) 
-enemy_killed_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "enemy_killed.wav")))
+enemy_killed_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "enemy_killed.ogg")))
 enemy_killed_sound.set_volume(0.1)
-powerup_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "powerup.wav")))
+powerup_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "powerup.ogg")))
 powerup_sound.set_volume(0.6)
-player_damaged_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "explosion.wav")))
+player_damaged_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "explosion.ogg")))
 player_damaged_sound.set_volume(0.3)
 
 def play_menu_music():
