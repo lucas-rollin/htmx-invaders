@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import random
+import asyncio
 
 import pygame
 
@@ -20,21 +21,19 @@ def resource_path(relative_path):
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1280, 720
 FPS = 60
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SCALED)
 pygame.display.set_caption("htmx vs The JS Fatigue")
 clock = pygame.time.Clock()
 
+FONT_PATH = resource_path(os.path.join("assets", "fonts", "SpaceMono-Regular.ttf"))
 
 def get_font(size, bold=False):
-    """Grab a monospace-ish font, falling back gracefully across platforms."""
-    for name in ("consolas", "couriernew", "dejavusansmono", "monospace"):
-        f = pygame.font.SysFont(name, size, bold=bold)
-        if f is not None:
-            return f
-    return pygame.font.Font(None, size)
+    f = pygame.font.Font(FONT_PATH, size)
+    f.set_bold(bold)
+    return f
 
 
 FONT_BIG = get_font(56, bold=True)
@@ -78,7 +77,7 @@ POWERUPS = [
     {
         "name": "hx-boost", 
         "color": HTMX_COLOR, 
-        "symbol": "<b>", 
+        "symbol": "b", 
         "effect": "rapid_fire", 
         "timer": 8,
         "spawn_rate_weight": 3
@@ -86,7 +85,7 @@ POWERUPS = [
     {
         "name": "hx-trigger", 
         "color": HTMX_COLOR, 
-        "symbol": "<t>", 
+        "symbol": "t", 
         "effect": "triple_shot", 
         "timer": 8,
         "spawn_rate_weight": 2
@@ -106,7 +105,15 @@ POWERUPS = [
         "effect": "shield", 
         "timer": 6,
         "spawn_rate_weight": 2
-    },        
+    },
+    {
+        "name": "hx-swap", 
+        "color": HTMX_COLOR, 
+        "symbol": "^", 
+        "effect": "enemy_pushback", 
+        "timer": 0,
+        "spawn_rate_weight": 2
+    },                
 ]
 
 IMG_DIR = resource_path(os.path.join("assets", "img"))
@@ -192,7 +199,7 @@ class BgParticle:
         surf.blit(img, (self.x, self.y))
 
 
-bg_particles = [BgParticle() for _ in range(28)]
+bg_particles = [BgParticle() for _ in range(100)]
 
 
 def draw_background(dt):
@@ -209,15 +216,12 @@ def draw_background(dt):
 SFX_DIR = os.path.join("assets", "sfx")
 
 SOUNTRACK_PATHS = [
-    "the_master.ogg",
-    "sunny_glade.ogg",
-    "gate_of_steiner.ogg",
-    "city_ruins.ogg",
-    "wretched_weaponry.ogg",
-    "war_war.ogg",
+    "a-hero-of-the-80s.ogg",
+    "retro-lounge.ogg",
+    "retro.ogg",
 ]
 
-MENU_SOUNDTRACK = "hub_world.ogg"
+MENU_SOUNDTRACK = "menu.ogg"
 
 shoot_sound = pygame.mixer.Sound(resource_path(os.path.join(SFX_DIR, "shoot.wav")))
 shoot_sound.set_volume(0.15) 
@@ -256,6 +260,7 @@ class Player:
         self.cooldown_left = 0.0
         self.lives = 3
         self.hit_flash = 0.0
+        self.immunity = 0.0
 
     @property
     def rect(self):
@@ -274,6 +279,8 @@ class Player:
             self.cooldown_left -= dt
         if self.hit_flash > 0:
             self.hit_flash -= dt
+        if self.immunity > 0:
+            self.immunity -= dt
 
     def try_shoot(self, powerup_effects):
         rapid_fire = any(p.effect == "rapid_fire" for p in powerup_effects)
@@ -363,7 +370,8 @@ class Bullet:
             self.alive = False
 
     def draw(self, surf):
-        pygame.draw.rect(surf, self.color, self.rect, border_radius=2)
+        color = DANGER_COLOR if self.pierce_shot else self.color
+        pygame.draw.rect(surf, color, self.rect, border_radius=2)
 
 
 class PowerUpDrop:
@@ -418,12 +426,27 @@ class PowerUpEffect:
     def __init__(self, power):
         self.effect = power["effect"]
         self.timer = power["timer"]
+        self.symbol = power["symbol"]
+        self.color = power["color"]
         self.active = True
+        self.width = FONT_SMALL.size(self.symbol)[0]
 
     def update(self, dt):
         self.timer -= dt
         if self.timer < 0:
             self.active = False 
+
+    def draw(self, surf, x, y):
+        if self.timer < 2:
+            pulse = (math.sin(pygame.time.get_ticks() / 50) + 1) / 2
+            alpha = int(255 * pulse)
+        else:
+            alpha = 255
+
+        p = FONT_SMALL.render(self.symbol, True, self.color)
+        
+        p.set_alpha(alpha)
+        surf.blit(p, (x, y))
 
 
 class Enemy:
@@ -497,6 +520,8 @@ class FloatingText:
 
 
 class Game:
+    ENEMY_DROP_RATE = 18
+    
     def __init__(self):
         self.state = STATE_MENU
 
@@ -521,8 +546,8 @@ class Game:
     # -- wave setup --------------------------------------------------------
     def spawn_wave(self):
         self.enemies = []
-        rows = min(3 + (self.level - 1) // 2, 5)
-        cols = min(6 + (self.level - 1), 10)
+        rows = min(3 + (self.level - 1) // 2, 7)
+        cols = min(6 + (self.level - 1), 16)
         spacing_x = 64
         spacing_y = 58
         total_w = cols * spacing_x
@@ -548,6 +573,8 @@ class Game:
         self.player = Player()
         self.floaters = []
         self.spawn_wave()
+        self.powerup_drops = []
+        self.powerup_effects = []
         self.state = STATE_PLAYING
 
         play_random_soundtrack()
@@ -643,7 +670,8 @@ class Game:
         drop = 0
         if will_max > WIDTH - 20 or will_min < 20:
             self.formation_dx *= -1
-            drop = 18
+            self.formation_drop += self.ENEMY_DROP_RATE
+            drop = self.ENEMY_DROP_RATE
             step = 0
 
         for e in self.enemies:
@@ -683,12 +711,12 @@ class Game:
             if b.alive and b.rect.colliderect(pr):
                 b.alive = False
                 shield = any(p.effect == "shield" for p in self.powerup_effects)
-                if not shield:
+                if not shield and self.player.immunity <= 0:
                     self.lose_life()
                     player_damaged_sound.play()
         self.enemy_bullets = [b for b in self.enemy_bullets if b.alive]
 
-        # powerup vs player
+        # powerup drop vs player
         for p in self.powerup_drops:
             if p.alive and p.rect.colliderect(pr):
                 p.alive = False
@@ -706,6 +734,15 @@ class Game:
             self.player.lives += 1
             return
 
+        if new_power["effect"] == "enemy_pushback" and self.formation_drop >= self.ENEMY_DROP_RATE:
+            if self.formation_drop >= self.ENEMY_DROP_RATE * 2:
+                upward = self.ENEMY_DROP_RATE * 2
+            else:
+                upward = self.ENEMY_DROP_RATE
+            for e in self.enemies:
+                e.base_y -= upward
+            return
+
         for e in self.powerup_effects:
             if e.effect == new_power["effect"]:
                 e.timer = new_power["timer"]
@@ -716,6 +753,7 @@ class Game:
     def lose_life(self, full=False):
         self.player.lives -= 1
         self.player.hit_flash = 0.3
+        self.player.immunity = 1.5
         if full:
             self.player.lives = 0
         if self.player.lives <= 0:
@@ -753,11 +791,19 @@ class Game:
         level_img = FONT_SMALL.render(f"WAVE {self.level}", True, TEXT_COLOR)
         surf.blit(level_img, (WIDTH / 2 - level_img.get_width() / 2, 14))
 
+        powerups_label = FONT_SMALL.render("POWERUPS", True, TEXT_COLOR)
+        surf.blit(powerups_label, (WIDTH - 450, 14))
+        current_x = WIDTH - 350
+        padding = 8
+        for i, e in enumerate(self.powerup_effects):
+            e.draw(surf, current_x, 14)
+            current_x += e.width + padding
+
         lives_label = FONT_SMALL.render("LIVES", True, TEXT_COLOR)
         surf.blit(lives_label, (WIDTH - 190, 14))
         for i in range(self.player.lives):
             tag = FONT_SMALL.render("</>", True, HTMX_COLOR)
-            surf.blit(tag, (WIDTH - 95 + i * 32, 12))
+            surf.blit(tag, (WIDTH - 120 + i * 32, 12))
 
     def draw_center_banner(self, surf, text, color):
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
@@ -822,7 +868,7 @@ class Game:
 # ----------------------------------------------------------------------------
 
 
-def main():
+async def main():
     game = Game()
     running = True
 
@@ -846,10 +892,11 @@ def main():
         draw_background(dt)
         game.draw(screen)
         pygame.display.flip()
+        await asyncio.sleep(0)
 
 
     pygame.quit()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
