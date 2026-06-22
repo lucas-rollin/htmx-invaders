@@ -28,7 +28,9 @@ jobs:
         run: pip install pygbag
 
       - name: Build WASM bundle
-        run: pygbag --build .
+        run: |
+          mkdir -p build/web
+          pygbag --build .
 
       - uses: actions/upload-pages-artifact@v3
         with:
