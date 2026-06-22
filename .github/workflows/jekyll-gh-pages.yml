@@ -29,7 +29,10 @@ jobs:
 
       - name: Build WASM bundle
         run: |
-          mkdir -p build/web
+          mkdir -p build/web build/web-cache
+          CDN="https://pygame-web.github.io/cdn/0.9.3"
+          curl -L "$CDN/default.tmpl" -o build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl
+          curl -L "$CDN/favicon.png"  -o build/web-cache/29a2a48092f8c1a6595a20019f830691.png
           pygbag --build .
 
       - uses: actions/upload-pages-artifact@v3
