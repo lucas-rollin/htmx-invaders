@@ -11,9 +11,6 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
 
 - [https://lucas-rollin.github.io/htmx-invaders/](https://lucas-rollin.github.io/htmx-invaders/)
 
-> **Note:** Chromium-based browsers (Chrome, Edge, Brave) may have audio glitches.  
-> For the best experience, use **Firefox**. The sound works flawlessly there!
-
 ## Controls
 
 - LEFT/RIGHT or A/D  - move
