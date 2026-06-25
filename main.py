@@ -19,6 +19,13 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+# Improve WASM audio in chromium
+pygame.mixer.pre_init(44100, -16, 2, 4096)
+try:
+    pygame.mixer.SoundPatch()
+except Exception:
+    pass
+
 pygame.init()
 
 WIDTH, HEIGHT = 1280, 720
