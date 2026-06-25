@@ -5,7 +5,16 @@ You play as HTMX (the **"</>"** ship) defending the simple web from an
 ever-descending wave of JS framework mascots. Shoot them down before
 "JS fatigue" reaches critical mass.
 
-Controls:
+## Play in your browser (WASM)
+
+No installation required! The game is compiled to WebAssembly and hosted on GitHub Pages:
+
+- [https://lucas-rollin.github.io/htmx-invaders/](https://lucas-rollin.github.io/htmx-invaders/)
+
+> **Note:** Chromium-based browsers (Chrome, Edge, Brave) may have audio glitches.  
+> For the best experience, use **Firefox**. The sound works flawlessly there!
+
+## Controls
 
 - LEFT/RIGHT or A/D  - move
 - SPACE              - shoot
@@ -16,28 +25,20 @@ Controls:
 
 <ul>
   <li>
-    <summary>Little Smiley's Adventure - Spencer YK (Menu)</summary>
-    <details>
+    <strong>Little Smiley's Adventure</strong> -
     Music by <a href="https://pixabay.com/users/spencer_yk-36670691/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=151007">Spencer Y.K.</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=151007">Pixabay</a>
-    </details>
   </li>
   <li>
-    <summary>Retro Louge - Bransboynd</summary>
-    <details>
+    <strong>Retro Louge - Bransboynd</strong> -
     Music by <a href="https://pixabay.com/users/bransboynd-51721546/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=389644">Roman Rumyantsev</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=389644">Pixabay</a>
-    </details>
   </li>
   <li>
-    <summary>Retro - The Mountain</summary> 
-    <details>
+    <strong>Retro - The Mountain</strong> - 
     Music by <a href="https://pixabay.com/users/the_mountain-3616498/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=143303">Dmitrii Kolesnikov</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=143303">Pixabay</a>
-    </detials>
   </li>
   <li>
-    <summary>A Hero of the 80s - Grand Project</summary>
-    <details>
+    <strong>A Hero of the 80s - Grand Project</strong> -
     Music by <a href="https://pixabay.com/users/grand_project-19033897/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=126684">Roman Dudchyk</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=126684">Pixabay</a>
-    </details>
   </li>
 </ul>
 
@@ -64,12 +65,15 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Using Pyinstaller to bundle
+## Using Pyinstaller to bundle an executable
 
 Run:
 ```bash
-pyinstaller --onefile --icon=htmx.ico --add-data "assets;assets" main.py
+pyinstaller --onefile --icon=htmx.ico --add-data "assets;assets" main.py # on windows
+pyinstaller --onefile --add-data "assets:assets" main.py # on linux
 ```
+
+The executable will be located in the `dist/` folder.
 
 ## Thank you for Playing
 
