@@ -1,4 +1,5 @@
 # HTMX vs THE FRAMEWORK SWARM
+
 A tiny Space-Invaders-style demo built with pygame-ce.
 
 You play as HTMX (the **"</>"** ship) defending the simple web from an
@@ -41,33 +42,24 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
 
 ## Start game in Development
 
-1. Start the virtual enviroment:
-```bash
-python -m venv venv
-```
+1. Sync dependencies and install the local package in editable mode:
+    
+    ```bash
+    uv sync
+    ```
 
-2. Activate the virtual enviroment:
-```bash
-.\venv\Scripts\activate # on windows
-source venv/bin/activate # on linux
-```
+2. Run the game from anywhere in the project root:
 
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Start the game:
-```bash
-python main.py
-```
+    ```bash
+    uv run htmx-invaders
+    ```
 
 ## Using Pyinstaller to bundle an executable
 
 Run:
 ```bash
-pyinstaller --onefile --icon=htmx.ico --add-data "assets;assets" main.py # on windows
-pyinstaller --onefile --add-data "assets:assets" main.py # on linux
+uv run pyinstaller --onefile --icon=htmx.ico --add-data "assets;assets" main.py # on windows
+uv run pyinstaller --onefile --add-data "assets:assets" main.py # on linux
 ```
 
 The executable will be located in the `dist/` folder.

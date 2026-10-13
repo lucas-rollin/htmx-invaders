@@ -20,12 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Install pygbag
-        run: pip install pygbag
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --wasm
 
       - name: Build WASM bundle
         run: |
@@ -33,7 +37,7 @@ jobs:
           CDN="https://pygame-web.github.io/cdn/0.9.3"
           curl -L "$CDN/default.tmpl" -o build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl
           curl -L "$CDN/favicon.png"  -o build/web-cache/29a2a48092f8c1a6595a20019f830691.png
-          pygbag --build .
+          uv run pygbag --build .
 
       - uses: actions/upload-pages-artifact@v3
         with:
