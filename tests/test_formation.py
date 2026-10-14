@@ -59,7 +59,7 @@ def test_bounces_and_drops_at_right_wall():
 
 
 def test_bounces_at_left_wall():
-    f, e = lone_enemy(Formation.EDGE_MARGIN)
+    f, _e = lone_enemy(Formation.EDGE_MARGIN)
     f.dx = -100.0
     f.update(0.1)
     assert f.dx == 100.0
@@ -96,6 +96,6 @@ def test_remove_dead():
 
 
 def test_reached():
-    f, e = lone_enemy(500, y=300)
+    f, _e = lone_enemy(500, y=300)
     assert not f.reached(600)
     assert f.reached(300 + Enemy.HEIGHT - 10)

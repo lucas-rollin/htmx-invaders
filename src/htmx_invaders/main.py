@@ -17,7 +17,7 @@ def init_pygame():
     pygame.mixer.pre_init(44100, -16, 2, 4096)
     try:
         pygame.mixer.SoundPatch()
-    except Exception:
+    except (AttributeError, NotImplementedError, pygame.error):
         pass
 
     pygame.init()

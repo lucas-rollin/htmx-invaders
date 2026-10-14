@@ -5,6 +5,11 @@ from .player import Player
 from .powerup import PowerUpDrop, PowerUpEffect, has_effect
 
 __all__ = [
-    "Bullet", "Enemy", "FloatingText", "Player",
-    "PowerUpDrop", "PowerUpEffect", "has_effect",
+    "Bullet",
+    "Enemy",
+    "FloatingText",
+    "Player",
+    "PowerUpDrop",
+    "PowerUpEffect",
+    "has_effect",
 ]

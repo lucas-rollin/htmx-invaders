@@ -41,6 +41,7 @@ def no_drops(monkeypatch):
 
 # -- state machine -----------------------------------------------------------
 
+
 def test_starts_on_menu_with_menu_music(game, audio):
     assert game.state is GameState.MENU
     assert audio.music == ["menu"]
@@ -74,6 +75,7 @@ def test_game_over_ignores_space(playing):
 
 
 # -- shooting & scoring ------------------------------------------------------
+
 
 def test_space_fires_with_sound_once_per_cooldown(playing, audio):
     step(playing, pressed=[pygame.K_SPACE])
@@ -122,6 +124,7 @@ def test_kill_can_drop_powerup(playing, monkeypatch):
 
 # -- waves -------------------------------------------------------------------
 
+
 def test_clearing_last_enemy_starts_wave_clear_then_next_level(playing, no_drops):
     e = one_enemy(playing)
     playing.powerup_effects.append(effect_for(Effect.SHIELD))
@@ -139,6 +142,7 @@ def test_clearing_last_enemy_starts_wave_clear_then_next_level(playing, no_drops
 
 
 # -- damage ------------------------------------------------------------------
+
 
 def test_enemy_bullet_costs_a_life(playing, audio):
     enemy_bullet_on_player(playing)
@@ -192,6 +196,7 @@ def test_fatal_hit_on_same_frame_as_last_kill_stays_game_over(playing, no_drops)
 
 
 # -- power-ups ---------------------------------------------------------------
+
 
 def drop_on_player(game, effect):
     r = game.player.rect
@@ -252,6 +257,7 @@ def test_expired_effects_are_removed(playing):
 
 
 # -- rendering smoke tests ---------------------------------------------------
+
 
 @pytest.mark.parametrize("state", list(GameState))
 def test_draw_every_state_without_error(playing, state):

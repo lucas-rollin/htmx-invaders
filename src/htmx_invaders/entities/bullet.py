@@ -18,8 +18,10 @@ class Bullet:
     @property
     def rect(self):
         return pygame.Rect(
-            int(self.x - self.width / 2), int(self.y - self.height / 2),
-            self.width, self.height,
+            int(self.x - self.width / 2),
+            int(self.y - self.height / 2),
+            self.width,
+            self.height,
         )
 
     def update(self, dt):

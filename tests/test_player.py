@@ -55,7 +55,11 @@ def test_rapid_fire_halves_cooldown():
 
 def test_triple_shot_spreads():
     bullets = Player().try_shoot([effect_for(Effect.TRIPLE_SHOT)])
-    assert sorted(b.vx for b in bullets) == [-Player.SPREAD_SPEED, 0, Player.SPREAD_SPEED]
+    assert sorted(b.vx for b in bullets) == [
+        -Player.SPREAD_SPEED,
+        0,
+        Player.SPREAD_SPEED,
+    ]
 
 
 def test_pierce_flag_propagates_to_all_bullets():

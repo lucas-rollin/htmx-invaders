@@ -4,7 +4,12 @@ import pygame
 
 from .content import FRAMEWORKS
 from .settings import (
-    DANGER_COLOR, HEIGHT, HTMX_COLOR, PANEL_COLOR, TEXT_COLOR, WIDTH,
+    DANGER_COLOR,
+    HEIGHT,
+    HTMX_COLOR,
+    PANEL_COLOR,
+    TEXT_COLOR,
+    WIDTH,
 )
 from .util import blit_centered, blit_centered_x, lighten, pulse
 
@@ -35,7 +40,9 @@ def draw_hud(surf, assets, score, level, effects, lives):
 
 def draw_wave_clear(surf, assets, text, color):
     _dim(surf, 120)
-    blit_centered_x(surf, assets.big.render(text, True, color), WIDTH / 2, HEIGHT / 2 - 60)
+    blit_centered_x(
+        surf, assets.big.render(text, True, color), WIDTH / 2, HEIGHT / 2 - 60
+    )
     sub = assets.small.render("next wave incoming...", True, TEXT_COLOR)
     blit_centered_x(surf, sub, WIDTH / 2, HEIGHT / 2 + 10)
 
@@ -71,7 +78,9 @@ def draw_menu(surf, assets):
             blit_centered(surf, logo, r.center)
 
     for i, line in enumerate(("ARROWS / A D  -  move", "SPACE  -  shoot")):
-        blit_centered_x(surf, assets.small.render(line, True, TEXT_COLOR), WIDTH / 2, 360 + i * 28)
+        blit_centered_x(
+            surf, assets.small.render(line, True, TEXT_COLOR), WIDTH / 2, 360 + i * 28
+        )
 
     color = lighten(HTMX_COLOR, pulse(250) * 0.5)
     start = assets.med.render("PRESS SPACE TO START", True, color)

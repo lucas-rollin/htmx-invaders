@@ -7,7 +7,12 @@ import pygame
 from . import screens
 from .content import JOKES, WAVE_CLEAR_MESSAGES, Effect, random_powerup
 from .entities import (
-    Bullet, FloatingText, Player, PowerUpDrop, PowerUpEffect, has_effect,
+    Bullet,
+    FloatingText,
+    Player,
+    PowerUpDrop,
+    PowerUpEffect,
+    has_effect,
 )
 from .formation import Formation
 from .settings import GOOD_COLOR, MAX_LIVES, POWERUP_DROP_CHANCE
@@ -88,8 +93,12 @@ class Game:
                 self.audio.play("shoot")
                 self.player_bullets.extend(bullets)
 
-        for group in (self.powerup_drops, self.powerup_effects,
-                      self.player_bullets, self.enemy_bullets):
+        for group in (
+            self.powerup_drops,
+            self.powerup_effects,
+            self.player_bullets,
+            self.enemy_bullets,
+        ):
             for item in group:
                 item.update(dt)
         self.powerup_drops = _alive(self.powerup_drops)
@@ -148,7 +157,9 @@ class Game:
         self.audio.play("enemy_killed")
         self.score += 10 * self.level
         self.floaters.append(
-            FloatingText(enemy.x + enemy.WIDTH / 2, enemy.y, random.choice(JOKES), enemy.fw.color)
+            FloatingText(
+                enemy.x + enemy.WIDTH / 2, enemy.y, random.choice(JOKES), enemy.fw.color
+            )
         )
         if random.random() < POWERUP_DROP_CHANCE:
             self.powerup_drops.append(
@@ -179,8 +190,10 @@ class Game:
                 self.audio.play("powerup")
                 self.floaters.append(
                     FloatingText(
-                        p.x + p.WIDTH / 2, p.y,
-                        p.spec.effect.value.replace("_", " "), p.spec.color,
+                        p.x + p.WIDTH / 2,
+                        p.y,
+                        p.spec.effect.value.replace("_", " "),
+                        p.spec.color,
                     )
                 )
         self.powerup_drops = _alive(self.powerup_drops)
@@ -223,7 +236,9 @@ class Game:
         for f in self.floaters:
             f.draw(surf, a)
 
-        screens.draw_hud(surf, a, self.score, self.level, self.powerup_effects, self.player.lives)
+        screens.draw_hud(
+            surf, a, self.score, self.level, self.powerup_effects, self.player.lives
+        )
 
         if self.state is GameState.WAVE_CLEAR:
             screens.draw_wave_clear(surf, a, self.flash_msg, GOOD_COLOR)

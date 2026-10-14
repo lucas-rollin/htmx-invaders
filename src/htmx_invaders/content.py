@@ -17,15 +17,15 @@ class Framework:
 
 
 FRAMEWORKS = (
-    Framework("React",   (97, 218, 251),  "react.png"),
-    Framework("Vue",     (66, 184, 131),  "vue.png"),
-    Framework("Angular", (234, 33, 162),  "angular.png"),
-    Framework("Redux",   (147, 100, 209), "redux.png"),
-    Framework("Svelte",  (255, 98, 0),    "svelte.png"),
-    Framework("npm",     (196, 54, 53),   "npm.png"),
-    Framework("Vite",    (154, 100, 255), "vite.png"),
+    Framework("React", (97, 218, 251), "react.png"),
+    Framework("Vue", (66, 184, 131), "vue.png"),
+    Framework("Angular", (234, 33, 162), "angular.png"),
+    Framework("Redux", (147, 100, 209), "redux.png"),
+    Framework("Svelte", (255, 98, 0), "svelte.png"),
+    Framework("npm", (196, 54, 53), "npm.png"),
+    Framework("Vite", (154, 100, 255), "vite.png"),
     Framework("Webpack", (137, 206, 242), "webpack.png"),
-    Framework("Babel",   (245, 207, 90),  "babel.png"),
+    Framework("Babel", (245, 207, 90), "babel.png"),
 )
 
 
@@ -45,16 +45,16 @@ class PowerUpSpec:
     symbol: str
     effect: Effect
     timer: float  # seconds the effect lasts; 0 = instant
-    weight: int   # relative drop probability
+    weight: int  # relative drop probability
 
 
 POWERUPS = (
-    PowerUpSpec("+1 life",    HTMX_COLOR,       "</>", Effect.EXTRA_LIFE,     0, 1),
-    PowerUpSpec("hx-boost",   HTMX_COLOR,       "b",   Effect.RAPID_FIRE,     8, 3),
-    PowerUpSpec("hx-trigger", HTMX_COLOR,       "t",   Effect.TRIPLE_SHOT,    8, 2),
-    PowerUpSpec("vanilla.js", (239, 216, 29),   "JS",  Effect.PIERCE_SHOT,    8, 3),
-    PowerUpSpec("alpine.js",  (145, 190, 198),  "v",   Effect.SHIELD,         6, 2),
-    PowerUpSpec("hx-swap",    HTMX_COLOR,       "^",   Effect.ENEMY_PUSHBACK, 0, 2),
+    PowerUpSpec("+1 life", HTMX_COLOR, "</>", Effect.EXTRA_LIFE, 0, 1),
+    PowerUpSpec("hx-boost", HTMX_COLOR, "b", Effect.RAPID_FIRE, 8, 3),
+    PowerUpSpec("hx-trigger", HTMX_COLOR, "t", Effect.TRIPLE_SHOT, 8, 2),
+    PowerUpSpec("vanilla.js", (239, 216, 29), "JS", Effect.PIERCE_SHOT, 8, 3),
+    PowerUpSpec("alpine.js", (145, 190, 198), "v", Effect.SHIELD, 6, 2),
+    PowerUpSpec("hx-swap", HTMX_COLOR, "^", Effect.ENEMY_PUSHBACK, 0, 2),
 )
 
 

@@ -8,7 +8,7 @@ from .settings import WIDTH
 
 
 class Formation:
-    DROP_STEP = 18      # px the swarm descends each time it hits a wall
+    DROP_STEP = 18  # px the swarm descends each time it hits a wall
     EDGE_MARGIN = 20
     SPACING_X = 64
     SPACING_Y = 58
@@ -16,7 +16,7 @@ class Formation:
 
     def __init__(self):
         self.enemies: list[Enemy] = []
-        self.dx = 0.0          # px/sec horizontal drift
+        self.dx = 0.0  # px/sec horizontal drift
         self.total_drop = 0.0  # cumulative descent so far
 
     def __iter__(self):
@@ -65,7 +65,11 @@ class Formation:
         """Shove the swarm back up. Returns False if it hasn't descended yet."""
         if self.total_drop < self.DROP_STEP:
             return False
-        upward = self.DROP_STEP * 2 if self.total_drop >= self.DROP_STEP * 2 else self.DROP_STEP
+        upward = (
+            self.DROP_STEP * 2
+            if self.total_drop >= self.DROP_STEP * 2
+            else self.DROP_STEP
+        )
         for e in self.enemies:
             e.base_y -= upward
         return True

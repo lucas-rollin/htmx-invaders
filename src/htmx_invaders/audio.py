@@ -10,10 +10,10 @@ from .paths import SFX_DIR
 
 # name -> (file, volume)
 _SFX = {
-    "shoot":          ("shoot.ogg",       0.15),
-    "enemy_killed":   ("enemy_killed.ogg", 0.1),
-    "powerup":        ("powerup.ogg",     0.6),
-    "player_damaged": ("explosion.ogg",   0.3),
+    "shoot": ("shoot.ogg", 0.15),
+    "enemy_killed": ("enemy_killed.ogg", 0.1),
+    "powerup": ("powerup.ogg", 0.6),
+    "player_damaged": ("explosion.ogg", 0.3),
 }
 _MUSIC_VOLUME = 0.8
 

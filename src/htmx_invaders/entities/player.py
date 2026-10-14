@@ -4,7 +4,12 @@ import pygame
 
 from ..content import Effect
 from ..settings import (
-    DANGER_COLOR, HEIGHT, HTMX_COLOR, HTMX_GLOW, MAX_LIVES, WIDTH,
+    DANGER_COLOR,
+    HEIGHT,
+    HTMX_COLOR,
+    HTMX_GLOW,
+    MAX_LIVES,
+    WIDTH,
 )
 from ..util import blit_centered, pulse
 from .bullet import Bullet
@@ -55,12 +60,20 @@ class Player:
         if self.cooldown_left > 0:
             return []
 
-        cooldown = self.COOLDOWN / 2 if has_effect(effects, Effect.RAPID_FIRE) else self.COOLDOWN
+        cooldown = (
+            self.COOLDOWN / 2
+            if has_effect(effects, Effect.RAPID_FIRE)
+            else self.COOLDOWN
+        )
         self.cooldown_left = cooldown
 
         pierce = has_effect(effects, Effect.PIERCE_SHOT)
         cx = self.x + self.WIDTH / 2
-        spreads = (0, self.SPREAD_SPEED, -self.SPREAD_SPEED) if has_effect(effects, Effect.TRIPLE_SHOT) else (0,)
+        spreads = (
+            (0, self.SPREAD_SPEED, -self.SPREAD_SPEED)
+            if has_effect(effects, Effect.TRIPLE_SHOT)
+            else (0,)
+        )
         return [
             Bullet(cx, self.y - 6, -self.BULLET_SPEED, vx, HTMX_COLOR, pierce)
             for vx in spreads
@@ -74,7 +87,9 @@ class Player:
         if shield:
             alpha = int(70 * pulse(50)) if shield.timer < 2 else 40
             glow = pygame.Surface((r.width + 24, r.height + 24), pygame.SRCALPHA)
-            pygame.draw.rect(glow, (*HTMX_GLOW, alpha), glow.get_rect(), border_radius=14)
+            pygame.draw.rect(
+                glow, (*HTMX_GLOW, alpha), glow.get_rect(), border_radius=14
+            )
             surf.blit(glow, (r.x - 12, r.y - 12))
 
         pygame.draw.rect(surf, (28, 28, 40), r, border_radius=8)
@@ -86,5 +101,9 @@ class Player:
         pygame.draw.polygon(
             surf,
             (255, 200, 90),
-            [(r.centerx - 6, r.bottom), (r.centerx + 6, r.bottom), (r.centerx, r.bottom + flame_h)],
+            [
+                (r.centerx - 6, r.bottom),
+                (r.centerx + 6, r.bottom),
+                (r.centerx, r.bottom + flame_h),
+            ],
         )
