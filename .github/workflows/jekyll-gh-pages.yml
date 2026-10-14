@@ -7,15 +7,17 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   build:
+    needs: ci
     runs-on: ubuntu-latest
     env:
       APP_DIR: build/app
@@ -42,6 +44,14 @@ jobs:
           cp web/main.py "$APP_DIR/main.py"
           find "$APP_DIR" -name __pycache__ -prune -exec rm -rf {} +
 
+      - name: Verify staged files
+        run: |
+          for f in main.py htmx_invaders/main.py \
+                   assets/fonts/SpaceMono-Regular.ttf assets/img/react.png assets/sfx/menu.ogg; do
+            test -f "$APP_DIR/$f" || { echo "::error::staged app is missing $f"; exit 1; }
+          done
+          find "$APP_DIR" -type f | sort
+
       - name: Build WASM bundle
         run: |
           mkdir -p "$APP_DIR/build/web" "$APP_DIR/build/web-cache"
@@ -50,6 +60,21 @@ jobs:
           curl -fL "$CDN/favicon.png"  -o "$APP_DIR/build/web-cache/29a2a48092f8c1a6595a20019f830691.png"
           uv run --no-sync pygbag --build "$APP_DIR"
           test -f "$APP_DIR/build/web/index.html"
+
+      - name: Verify bundle contains the entry point and the package
+        run: |
+          python3 - <<'PY'
+          import glob, sys, zipfile
+          apks = glob.glob("build/app/build/web/*.apk")
+          if not apks:
+              sys.exit("::error::no .apk produced")
+          names = zipfile.ZipFile(apks[0]).namelist()
+          shim = [n for n in names if n.split("/")[-1] == "main.py" and "htmx_invaders" not in n]
+          pkg = [n for n in names if n.endswith("htmx_invaders/main.py")]
+          print(f"{apks[0]}: {len(names)} files; shim={shim}; package main={pkg}")
+          if not shim or not pkg:
+              sys.exit("::error::bundle is missing the root main.py shim or the package")
+          PY
 
       - uses: actions/upload-pages-artifact@v3
         if: ${{ !env.ACT }}
@@ -60,6 +85,9 @@ jobs:
     if: ${{ github.actor != 'nektos/act' }}
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
