@@ -12,11 +12,13 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APP_DIR: build/app
     steps:
       - uses: actions/checkout@v4
 
@@ -29,21 +31,33 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: uv sync --wasm
+        run: uv sync --only-group wasm
+
+      - name: Stage pygbag app folder
+        run: |
+          rm -rf "$APP_DIR"
+          mkdir -p "$APP_DIR"
+          cp -r src/htmx_invaders "$APP_DIR/"
+          cp -r assets "$APP_DIR/"
+          cp web/main.py "$APP_DIR/main.py"
+          find "$APP_DIR" -name __pycache__ -prune -exec rm -rf {} +
 
       - name: Build WASM bundle
         run: |
-          mkdir -p build/web build/web-cache
+          mkdir -p "$APP_DIR/build/web" "$APP_DIR/build/web-cache"
           CDN="https://pygame-web.github.io/cdn/0.9.3"
-          curl -L "$CDN/default.tmpl" -o build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl
-          curl -L "$CDN/favicon.png"  -o build/web-cache/29a2a48092f8c1a6595a20019f830691.png
-          uv run pygbag --build .
+          curl -fL "$CDN/default.tmpl" -o "$APP_DIR/build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl"
+          curl -fL "$CDN/favicon.png"  -o "$APP_DIR/build/web-cache/29a2a48092f8c1a6595a20019f830691.png"
+          uv run --no-sync pygbag --build "$APP_DIR"
+          test -f "$APP_DIR/build/web/index.html"
 
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ !env.ACT }}
         with:
-          path: build/web
+          path: build/app/build/web
 
   deploy:
+    if: ${{ github.actor != 'nektos/act' }}
     needs: build
     runs-on: ubuntu-latest
     environment:
