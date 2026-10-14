@@ -1,6 +1,19 @@
+# Bytecode & Tool Caches
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Virtual Environment (uv)
 .venv/
+
+# Build & Packaging (Pygbag, uv)
+build/
+dist/
+*.egg-info/
+web/build/
+
+# Temporary & Scratch
+tmp/
 *.tmp
 *.tmp.*
-tmp/
-build/
