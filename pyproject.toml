@@ -1,0 +1,29 @@
+[project]
+name = "htmx-invaders"
+version = "0.1.0"
+description = "A Space-Invaders-style game where HTMX defends the simple web from JS frameworks"
+readme = "README.md"
+authors = [
+    { name = "Lucas Rollin Ferreira", email = "lucasrollinferreira@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pygame-ce>=2.5.8",
+    "pyinstaller>=6.22.3",
+]
+
+[project.scripts]
+htmx-invaders = "htmx_invaders.main:run_game"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.17.0",
+]
+wasm = [
+    "pygbag>=0.9.3",
+]
