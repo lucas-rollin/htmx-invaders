@@ -56,9 +56,9 @@ jobs:
         run: |
           mkdir -p "$APP_DIR/build/web" "$APP_DIR/build/web-cache"
           CDN="https://pygame-web.github.io/cdn/0.9.3"
-          curl -fL "$CDN/default.tmpl" -o "$APP_DIR/build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl"
+          cp web/template.html "$APP_DIR/build/web-cache/27613e24ba16d44f2a5c88150c6d64e5.tmpl"
           curl -fL "$CDN/favicon.png"  -o "$APP_DIR/build/web-cache/29a2a48092f8c1a6595a20019f830691.png"
-          uv run --no-sync pygbag --build "$APP_DIR"
+          uv run --no-sync pygbag --template web/template.html --build "$APP_DIR"
           test -f "$APP_DIR/build/web/index.html"
 
       - name: Verify bundle contains the entry point and the package
