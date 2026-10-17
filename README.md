@@ -1,10 +1,12 @@
-# HTMX vs THE FRAMEWORK SWARM
+# HTMX Invaders
 
 A tiny Space-Invaders-style demo built with pygame-ce.
 
 You play as HTMX (the **"</>"** ship) defending the simple web from an
 ever-descending wave of JS framework mascots. Shoot them down before
 "JS fatigue" reaches critical mass.
+
+![HTMX Invaders menu screenshot](menu.png)
 
 ## Play in your browser (WASM)
 
@@ -19,7 +21,7 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
 - R                  - restart after game over
 - ESC                - quit
 
-## Soundtrack:
+## Soundtrack
 
 <ul>
   <li>
@@ -40,29 +42,9 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
   </li>
 </ul>
 
-## Start game in Development
+## Contributing
 
-1. Sync dependencies and install the local package in editable mode:
-    
-    ```bash
-    uv sync
-    ```
-
-2. Run the game from anywhere in the project root:
-
-    ```bash
-    uv run htmx-invaders
-    ```
-
-## Using Pyinstaller to bundle an executable
-
-Run:
-```bash
-uv run pyinstaller --onefile --icon=htmx.ico --add-data "assets;assets" main.py # on windows
-uv run pyinstaller --onefile --add-data "assets:assets" main.py # on linux
-```
-
-The executable will be located in the `dist/` folder.
+Want to run the project locally, build WASM, or contribute? Check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## Thank you for Playing
 
