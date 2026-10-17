@@ -74,6 +74,59 @@ def test_game_over_ignores_space(playing):
     assert playing.state is GameState.GAME_OVER
 
 
+def test_escape_returns_to_menu_from_playing(game, audio):
+    step(game, pressed=[pygame.K_SPACE])
+    assert game.state is GameState.PLAYING
+    step(game, pressed=[pygame.K_ESCAPE])
+    assert game.state is GameState.MENU
+    assert audio.music[-1] == "menu"
+
+
+def test_escape_returns_to_menu_from_wave_clear(game, audio):
+    step(game, pressed=[pygame.K_SPACE])
+    game.state = GameState.WAVE_CLEAR
+    step(game, pressed=[pygame.K_ESCAPE])
+    assert game.state is GameState.MENU
+    assert audio.music[-1] == "menu"
+
+
+def test_escape_returns_to_menu_from_game_over(game, audio):
+    step(game, pressed=[pygame.K_SPACE])
+    game.state = GameState.GAME_OVER
+    step(game, pressed=[pygame.K_ESCAPE])
+    assert game.state is GameState.MENU
+    assert audio.music[-1] == "menu"
+
+
+def test_escape_on_menu_stays_on_menu(game):
+    assert game.state is GameState.MENU
+    step(game, pressed=[pygame.K_ESCAPE])
+    assert game.state is GameState.MENU
+
+
+def test_to_menu_cleans_up_entities(game, audio):
+    step(game, pressed=[pygame.K_SPACE])
+    game.score = 100
+    game.level = 3
+    game.player_bullets.append(bullet_on(game.player.rect))
+    game.enemy_bullets.append(bullet_on(game.player.rect))
+    game.floaters.append(FloatingText(100, 100, "test", (255, 255, 255)))
+    game.powerup_drops.append(PowerUpDrop(100, 100, spec_for(Effect.SHIELD)))
+    game.powerup_effects.append(effect_for(Effect.SHIELD))
+
+    game.to_menu()
+
+    assert game.state is GameState.MENU
+    assert game.score == 0
+    assert game.level == 1
+    assert game.player_bullets == []
+    assert game.enemy_bullets == []
+    assert game.floaters == []
+    assert game.powerup_drops == []
+    assert game.powerup_effects == []
+    assert audio.music[-1] == "menu"
+
+
 # -- shooting & scoring ------------------------------------------------------
 
 
