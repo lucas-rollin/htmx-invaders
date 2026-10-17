@@ -4,11 +4,27 @@ import asyncio
 
 import pygame
 
-from .assets import Assets
-from .audio import Audio
-from .background import Background
-from .game import Game
-from .settings import FPS, HEIGHT, IS_WASM, MAX_DT, TITLE, WIDTH
+if __package__:
+    from .assets import Assets
+    from .audio import Audio
+    from .background import Background
+    from .game import Game
+    from .settings import FPS, HEIGHT, IS_WASM, MAX_DT, TITLE, WIDTH
+    from .touch import TouchControls
+else:
+    import sys
+    from pathlib import Path
+
+    _src = str(Path(__file__).resolve().parent.parent)
+    if _src not in sys.path:
+        sys.path.insert(0, _src)
+
+    from htmx_invaders.assets import Assets
+    from htmx_invaders.audio import Audio
+    from htmx_invaders.background import Background
+    from htmx_invaders.game import Game
+    from htmx_invaders.settings import FPS, HEIGHT, IS_WASM, MAX_DT, TITLE, WIDTH
+    from htmx_invaders.touch import TouchControls
 
 
 def init_pygame():
@@ -26,7 +42,7 @@ def init_pygame():
     return screen
 
 
-def poll_events():
+def poll_events(touch_controls=None):
     """Return (keep_running, keys pressed this frame)."""
     running = True
     just_pressed = set()
@@ -37,6 +53,8 @@ def poll_events():
             just_pressed.add(event.key)
             if event.key == pygame.K_ESCAPE and not IS_WASM:
                 running = False
+        if touch_controls:
+            touch_controls.handle_event(event)
     return running, just_pressed
 
 
@@ -49,17 +67,22 @@ async def main():
     audio = Audio()
     background = Background(assets)
     game = Game(assets, audio)
+    touch_controls = TouchControls(assets)
 
     running = True
     while running:
         dt = min(clock.tick(FPS) / 1000.0, MAX_DT)
 
-        running, just_pressed = poll_events()
-        game.update(dt, pygame.key.get_pressed(), just_pressed)
+        running, just_pressed = poll_events(touch_controls)
+        keys = touch_controls.update_inputs(
+            pygame.key.get_pressed(), just_pressed, game.state
+        )
+        game.update(dt, keys, just_pressed)
 
         background.update(dt)
         background.draw(screen)
         game.draw(screen)
+        touch_controls.draw(screen, game.state)
         pygame.display.flip()
         await asyncio.sleep(0)
 

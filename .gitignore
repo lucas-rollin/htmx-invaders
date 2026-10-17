@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+*.spec
 
 # Virtual Environment (uv)
 .venv/

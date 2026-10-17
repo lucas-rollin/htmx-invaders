@@ -14,12 +14,13 @@ from htmx_invaders.entities import PowerUpEffect
 from htmx_invaders.game import Game
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def _pygame():
-    pygame.display.init()
-    pygame.font.init()
+    if not pygame.display.get_init():
+        pygame.display.init()
+    if not pygame.font.get_init():
+        pygame.font.init()
     yield
-    pygame.quit()
 
 
 class Keys(dict):

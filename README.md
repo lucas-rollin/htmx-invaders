@@ -16,10 +16,10 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
 
 ## Controls
 
-- LEFT/RIGHT or A/D  - move
-- SPACE              - shoot
-- R                  - restart after game over
-- ESC                - quit (or return to menu on web)
+- LEFT/RIGHT, A/D, or touch ◀ / ▶ buttons - move
+- SPACE or touch `</>` FIRE button         - shoot (tap or hold)
+- R or tap screen                          - restart after game over
+- ESC or touch MENU button                 - return to menu (or quit on desktop)
 
 ## Soundtrack
 
