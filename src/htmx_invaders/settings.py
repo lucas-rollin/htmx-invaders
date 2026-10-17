@@ -1,5 +1,9 @@
 """Static configuration: screen, colors and global tuning constants."""
 
+import sys
+
+IS_WASM = sys.platform in ("emscripten", "wasi")
+
 TITLE = "htmx vs The JS Fatigue"
 WIDTH, HEIGHT = 1280, 720
 FPS = 60

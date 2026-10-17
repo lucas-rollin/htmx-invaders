@@ -58,6 +58,22 @@ class Game:
         self.state = GameState.PLAYING
         self.audio.play_random_soundtrack()
 
+    def to_menu(self):
+        self.state = GameState.MENU
+        self.score = 0
+        self.level = 1
+        self.player = Player()
+        self.formation = Formation()
+        self.player_bullets = []
+        self.enemy_bullets = []
+        self.powerup_drops = []
+        self.powerup_effects = []
+        self.floaters = []
+        self.enemy_shoot_timer = 0.0
+        self.message_timer = 0.0
+        self.flash_msg = ""
+        self.audio.play_menu_music()
+
     def _start_wave(self):
         self.formation.spawn(self.level)
         self.player_bullets = []
@@ -65,6 +81,10 @@ class Game:
 
     # -- update ------------------------------------------------------------
     def update(self, dt, keys, just_pressed):
+        if pygame.K_ESCAPE in just_pressed and self.state is not GameState.MENU:
+            self.to_menu()
+            return
+
         if self.state is GameState.MENU:
             if pygame.K_SPACE in just_pressed:
                 self.reset()
