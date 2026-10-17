@@ -52,8 +52,30 @@ def test_game_over_screen_renders_without_crash(monkeypatch):
     surf = pygame.Surface((1280, 720))
     assets = FakeAssets()
 
+    # Desktop native
     monkeypatch.setattr(screens, "IS_WASM", False)
+    monkeypatch.setattr(screens, "is_mobile_device", lambda: False)
     screens.draw_game_over(surf, assets, 100)
+    screens.draw_menu(surf, assets)
 
+    # Desktop Web (WASM but not mobile)
     monkeypatch.setattr(screens, "IS_WASM", True)
+    monkeypatch.setattr(screens, "is_mobile_device", lambda: False)
     screens.draw_game_over(surf, assets, 100)
+    screens.draw_menu(surf, assets)
+
+    # Mobile Web
+    monkeypatch.setattr(screens, "is_mobile_device", lambda: True)
+    screens.draw_game_over(surf, assets, 100)
+    screens.draw_menu(surf, assets)
+
+
+def test_hud_renders_without_crash():
+    surf = pygame.Surface((1280, 720))
+    assets = FakeAssets()
+    from htmx_invaders.content import Effect
+
+    from .conftest import effect_for
+
+    effects = [effect_for(Effect.SHIELD), effect_for(Effect.TRIPLE_SHOT)]
+    screens.draw_hud(surf, assets, score=1240, level=3, effects=effects, lives=3)
