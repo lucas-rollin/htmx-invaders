@@ -1,6 +1,6 @@
 [project]
 name = "htmx-invaders"
-version = "0.1.0"
+version = "2026.10.0"
 description = "A Space-Invaders-style game where HTMX defends the simple web from JS frameworks"
 readme = "README.md"
 authors = [
