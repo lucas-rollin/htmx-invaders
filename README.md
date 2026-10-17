@@ -19,7 +19,7 @@ No installation required! The game is compiled to WebAssembly and hosted on GitH
 - LEFT/RIGHT or A/D  - move
 - SPACE              - shoot
 - R                  - restart after game over
-- ESC                - quit
+- ESC                - quit (or return to menu on web)
 
 ## Soundtrack
 

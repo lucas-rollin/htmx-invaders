@@ -8,7 +8,7 @@ from .assets import Assets
 from .audio import Audio
 from .background import Background
 from .game import Game
-from .settings import FPS, HEIGHT, MAX_DT, TITLE, WIDTH
+from .settings import FPS, HEIGHT, IS_WASM, MAX_DT, TITLE, WIDTH
 
 
 def init_pygame():
@@ -35,7 +35,7 @@ def poll_events():
             running = False
         elif event.type == pygame.KEYDOWN:
             just_pressed.add(event.key)
-            if event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_ESCAPE and not IS_WASM:
                 running = False
     return running, just_pressed
 

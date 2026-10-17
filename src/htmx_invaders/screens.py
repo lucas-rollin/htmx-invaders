@@ -7,6 +7,7 @@ from .settings import (
     DANGER_COLOR,
     HEIGHT,
     HTMX_COLOR,
+    IS_WASM,
     PANEL_COLOR,
     TEXT_COLOR,
     WIDTH,
@@ -53,7 +54,12 @@ def draw_game_over(surf, assets, score):
     blit_centered_x(surf, title, WIDTH / 2, HEIGHT / 2 - 90)
     final = assets.med.render(f"final score: {score}", True, TEXT_COLOR)
     blit_centered_x(surf, final, WIDTH / 2, HEIGHT / 2 - 20)
-    hint = assets.small.render("press R to retry  -  ESC to quit", True, TEXT_COLOR)
+    hint_text = (
+        "press R to retry  -  ESC for menu"
+        if IS_WASM
+        else "press R to retry  -  ESC to quit"
+    )
+    hint = assets.small.render(hint_text, True, TEXT_COLOR)
     blit_centered_x(surf, hint, WIDTH / 2, HEIGHT / 2 + 30)
 
 
