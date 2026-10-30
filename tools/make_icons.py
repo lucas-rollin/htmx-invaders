@@ -103,7 +103,9 @@ def main():
     for filename, surf in web_icons.items():
         pygame.image.save(surf, str(WEB_DIR / filename))
 
-    print(f"Generated icons in {ICONS_DIR.relative_to(REPO_ROOT)} and {WEB_DIR.relative_to(REPO_ROOT)} (6 web icons)")
+    print(
+        f"Generated icons in {ICONS_DIR.relative_to(REPO_ROOT)} and {WEB_DIR.relative_to(REPO_ROOT)} (6 web icons)"
+    )
 
 
 if __name__ == "__main__":
