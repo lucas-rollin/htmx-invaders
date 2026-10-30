@@ -95,6 +95,39 @@ class TouchControls:
         self.is_right_held = False
         self.is_shoot_held = False
 
+        self._btn_menu = (
+            self._render_button(
+                self.menu_rect, label="MENU", font=self.assets.small, active=False
+            ),
+            self._render_button(
+                self.menu_rect, label="MENU", font=self.assets.small, active=True
+            ),
+        )
+        self._btn_left = (
+            self._render_button(self.left_rect, icon="left", active=False),
+            self._render_button(self.left_rect, icon="left", active=True),
+        )
+        self._btn_right = (
+            self._render_button(self.right_rect, icon="right", active=False),
+            self._render_button(self.right_rect, icon="right", active=True),
+        )
+        self._btn_shoot = (
+            self._render_button(
+                self.shoot_rect,
+                label="</>",
+                sublabel="FIRE",
+                font=self.assets.med,
+                active=False,
+            ),
+            self._render_button(
+                self.shoot_rect,
+                label="</>",
+                sublabel="FIRE",
+                font=self.assets.med,
+                active=True,
+            ),
+        )
+
     def handle_event(self, event: pygame.event.Event):
         """Process touch and pointer events."""
         if event.type == pygame.FINGERDOWN:
@@ -166,38 +199,16 @@ class TouchControls:
 
         # Always draw Menu button if not on MENU
         if state is not GameState.MENU:
-            self._draw_button(
-                surf,
-                self.menu_rect,
-                label="MENU",
-                font=self.assets.small,
-                active=any(
-                    self.menu_hitbox.collidepoint(p) for p in self._get_pointers()
-                ),
+            menu_active = any(
+                self.menu_hitbox.collidepoint(p) for p in self._get_pointers()
             )
+            surf.blit(self._btn_menu[bool(menu_active)], self.menu_rect)
 
         # Draw gameplay buttons during PLAYING and WAVE_CLEAR
         if state in (GameState.PLAYING, GameState.WAVE_CLEAR):
-            self._draw_button(
-                surf,
-                self.left_rect,
-                icon="left",
-                active=self.is_left_held,
-            )
-            self._draw_button(
-                surf,
-                self.right_rect,
-                icon="right",
-                active=self.is_right_held,
-            )
-            self._draw_button(
-                surf,
-                self.shoot_rect,
-                label="</>",
-                sublabel="FIRE",
-                font=self.assets.med,
-                active=self.is_shoot_held,
-            )
+            surf.blit(self._btn_left[bool(self.is_left_held)], self.left_rect)
+            surf.blit(self._btn_right[bool(self.is_right_held)], self.right_rect)
+            surf.blit(self._btn_shoot[bool(self.is_shoot_held)], self.shoot_rect)
 
     def _get_pointers(self):
         pointers = list(self.active_touches.values())
@@ -205,16 +216,15 @@ class TouchControls:
             pointers.append(self.mouse_pos)
         return pointers
 
-    def _draw_button(
+    def _render_button(
         self,
-        surf: pygame.Surface,
         rect: pygame.Rect,
         label: str | None = None,
         sublabel: str | None = None,
         icon: str | None = None,
         font: pygame.font.Font | None = None,
         active: bool = False,
-    ):
+    ) -> pygame.Surface:
         btn_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
         bg = (59, 130, 246, 170) if active else (24, 24, 38, 120)
         border = (147, 197, 253, 240) if active else (59, 130, 246, 140)
@@ -267,7 +277,20 @@ class TouchControls:
                     ),
                 )
 
-        surf.blit(btn_surf, (rect.x, rect.y))
+        return btn_surf
+
+    def _draw_button(
+        self,
+        surf: pygame.Surface,
+        rect: pygame.Rect,
+        label: str | None = None,
+        sublabel: str | None = None,
+        icon: str | None = None,
+        font: pygame.font.Font | None = None,
+        active: bool = False,
+    ):
+        btn = self._render_button(rect, label, sublabel, icon, font, active)
+        surf.blit(btn, (rect.x, rect.y))
 
     def _draw_orientation_warning(self, surf: pygame.Surface):
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
