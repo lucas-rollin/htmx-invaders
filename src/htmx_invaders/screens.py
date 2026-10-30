@@ -7,13 +7,14 @@ from .settings import (
     DANGER_COLOR,
     HEIGHT,
     HTMX_COLOR,
+    HTMX_MARK_COLOR,
     IS_WASM,
     PANEL_COLOR,
     TEXT_COLOR,
     WIDTH,
 )
 from .touch import is_mobile_device
-from .util import blit_centered, blit_centered_x, lighten, pulse
+from .util import blit_centered, blit_centered_x, lighten, pulse, render_rich_text
 
 
 def _dim(surf, alpha):
@@ -26,7 +27,14 @@ def draw_hud(surf, assets, score, level, effects, lives):
     surf.blit(assets.small.render(f"SCORE {score}", True, TEXT_COLOR), (68, 14))
 
     surf.blit(assets.small.render("LIVES", True, TEXT_COLOR), (240, 14))
-    tag = assets.small.render("</>", True, HTMX_COLOR)
+    tag = render_rich_text(
+        assets.small,
+        [
+            ("<", HTMX_MARK_COLOR),
+            ("/", HTMX_COLOR),
+            (">", HTMX_MARK_COLOR),
+        ],
+    )
     for i in range(lives):
         surf.blit(tag, (305 + i * 32, 12))
 
@@ -66,7 +74,15 @@ def draw_game_over(surf, assets, score):
 
 
 def draw_menu(surf, assets):
-    title = assets.big.render("</> vs The JS Fatigue", True, HTMX_COLOR)
+    title = render_rich_text(
+        assets.big,
+        [
+            ("<", HTMX_MARK_COLOR),
+            ("/", HTMX_COLOR),
+            (">", HTMX_MARK_COLOR),
+            (" vs The JS Fatigue", HTMX_COLOR),
+        ],
+    )
     blit_centered_x(surf, title, WIDTH / 2, 130)
 
     sub = assets.small.render(

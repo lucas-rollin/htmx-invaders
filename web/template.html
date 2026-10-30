@@ -172,6 +172,8 @@ function toggle_fullscreen() {
     <meta name="theme-color" content="#12121c">
 
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
 
     <style>
         html, body {
@@ -443,6 +445,14 @@ frameborder="1"
 
     function frame_online(url) {
         window.frames["iframe"].location = url;
+    }
+
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("./sw.js")
+                .then((reg) => console.log("ServiceWorker registered:", reg.scope))
+                .catch((err) => console.warn("ServiceWorker registration failed:", err));
+        });
     }
 
     </script>

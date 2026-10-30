@@ -76,6 +76,16 @@ jobs:
               sys.exit("::error::bundle is missing the root main.py shim or the package")
           PY
 
+      - name: Stage PWA and Icon assets
+        run: |
+          cp web/manifest.webmanifest "$APP_DIR/build/web/"
+          cp web/sw.js "$APP_DIR/build/web/"
+          cp web/*.png "$APP_DIR/build/web/"
+          cp web/*.ico "$APP_DIR/build/web/" 2>/dev/null || true
+          for f in manifest.webmanifest sw.js favicon.png icon-192.png icon-512.png icon-maskable-512.png; do
+            test -f "$APP_DIR/build/web/$f" || { echo "::error::missing PWA asset: $f"; exit 1; }
+          done
+
       - uses: actions/upload-pages-artifact@v3
         if: ${{ !env.ACT }}
         with:

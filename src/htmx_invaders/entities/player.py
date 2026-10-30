@@ -8,16 +8,17 @@ from ..settings import (
     HEIGHT,
     HTMX_COLOR,
     HTMX_GLOW,
+    HTMX_MARK_COLOR,
     MAX_LIVES,
     WIDTH,
 )
-from ..util import blit_centered, pulse
+from ..util import blit_centered, pulse, render_rich_text
 from .bullet import Bullet
 from .powerup import has_effect
 
 
 class Player:
-    WIDTH = 70
+    WIDTH = 71
     HEIGHT = 36
     SPEED = 360
     COOLDOWN = 0.28
@@ -82,6 +83,7 @@ class Player:
     def draw(self, surf, assets, effects=()):
         r = self.rect
         color = DANGER_COLOR if self.hit_flash > 0 else HTMX_COLOR
+        hull = (28, 28, 40)
 
         shield = next((e for e in effects if e.effect == Effect.SHIELD), None)
         if shield:
@@ -92,11 +94,44 @@ class Player:
             )
             surf.blit(glow, (r.x - 12, r.y - 12))
 
-        pygame.draw.rect(surf, (28, 28, 40), r, border_radius=8)
-        pygame.draw.rect(surf, color, r, width=2, border_radius=8)
-        blit_centered(surf, assets.med.render("</>", True, color), r.center)
+        def mx(x):
+            """Mirror an x coordinate across the sprite's vertical axis."""
+            return r.left + r.right - 1 - x
 
-        # little engine flicker
+        # Lateral wings
+        wing = [
+            (r.left + 8, r.top + 8),
+            (r.left - 7, r.bottom - 2),
+            (r.left + 8, r.bottom - 4),
+        ]
+        for pts in (wing, [(mx(x), y) for x, y in wing]):
+            pygame.draw.polygon(surf, hull, pts)
+            pygame.draw.polygon(surf, color, pts, width=2)
+
+        # Nose
+        cx = r.centerx
+        tip = (cx, r.top - 7)
+        left_base = (cx - 9, r.top + 2)
+        right_base = (cx + 9, r.top + 2)
+        pygame.draw.polygon(surf, hull, [tip, left_base, right_base])
+        pygame.draw.line(surf, color, tip, left_base, 2)
+        pygame.draw.line(surf, color, tip, right_base, 2)
+
+        # Body
+        pygame.draw.rect(surf, hull, r, border_radius=8)
+        pygame.draw.rect(surf, color, r, width=2, border_radius=8)
+
+        logo = render_rich_text(
+            assets.med,
+            [
+                ("<", HTMX_MARK_COLOR),
+                ("/", color),
+                (">", HTMX_MARK_COLOR),
+            ],
+        )
+        blit_centered(surf, logo, r.center)
+
+        # engine flicker
         flame_h = random.randint(4, 10)
         pygame.draw.polygon(
             surf,
