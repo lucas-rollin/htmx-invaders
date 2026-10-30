@@ -21,3 +21,20 @@ def blit_centered(surf, img, center):
 
 def blit_centered_x(surf, img, cx, y):
     surf.blit(img, (cx - img.get_width() / 2, y))
+
+
+def render_rich_text(font, segments, antialias=True):
+    """Render [(text, color), ...] into a single surface."""
+    rendered = [font.render(text, antialias, color) for text, color in segments]
+
+    width = sum(s.get_width() for s in rendered)
+    height = max(s.get_height() for s in rendered)
+
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+
+    x = 0
+    for segment in rendered:
+        surface.blit(segment, (x, (height - segment.get_height()) // 2))
+        x += segment.get_width()
+
+    return surface
