@@ -1,13 +1,13 @@
 # Contributing to HTMX Invaders
 
-First off, thank you for taking the time to contribute! 🎉 
+First off, thank you for taking the time to contribute! 🎉
 
 Whether you're fixing a bug, improving the WASM build, or adding more fuel to the fire, contributions are welcome.
 
 ## Setup & Local Development
 
 1. **Clone & Setup Environment:**
-    
+
     ```bash
     git clone https://github.com/lucas-rollin/htmx-invaders.git
     cd htmx-invaders
@@ -15,13 +15,13 @@ Whether you're fixing a bug, improving the WASM build, or adding more fuel to th
     ```
 
 2. **Run Desktop Game Locally:**
-    
+
     ```bash
     uv run htmx-invaders
     ```
 
 3. **Run Tests:**
-    
+
     ```bash
     uv run pytest
     ```
@@ -36,7 +36,7 @@ Whether you're fixing a bug, improving the WASM build, or adding more fuel to th
 ## WebAssembly (WASM) Development
 
 1. **Sync WASM Dependencies:**
-    
+
     ```bash
     uv sync --only-group wasm
     ```
@@ -85,6 +85,14 @@ Whether you're fixing a bug, improving the WASM build, or adding more fuel to th
     ```bash
     uv run pyinstaller --paths src --name htmx-invaders --onefile --add-data "assets:assets" main.py
     ```
+
+## Generating Icons
+
+To generate the game player icon run:
+
+```bash
+uv run tools/make_icons.py
+```
 
 ## How to Contribute
 
