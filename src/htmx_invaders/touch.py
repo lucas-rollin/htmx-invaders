@@ -307,9 +307,7 @@ class TouchControls:
         title = self.assets.big.render("PLEASE ROTATE DEVICE", True, HTMX_GLOW)
         blit_centered_x(surf, title, WIDTH / 2, HEIGHT / 2 - 70)
 
-        sub = self.assets.med.render(
-            "Turn your phone horizontally 🔄", True, TEXT_COLOR
-        )
+        sub = self.assets.med.render("Turn your phone horizontally", True, TEXT_COLOR)
         blit_centered_x(surf, sub, WIDTH / 2, HEIGHT / 2)
 
         desc = self.assets.small.render(
